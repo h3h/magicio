@@ -8,12 +8,24 @@
   <script type="text/javascript">
 
   $(document).ready(function($) {
-    $("#to-be-revealed").magicio({debug: true}).magicio('run');
+    $("#to-be-revealed").on('afterparse', function (evt) {
+      console.log("afterparse: %o", evt);
+    }).on('beforepause', function (evt) {
+      console.log("beforepause: %o", evt);
+      $(evt.action.nextElements.first()).addClass('revealed');
+    }).magicio({debug: true});
+
+    $("#click-to-start").on('click', function (evt) {
+      $("#to-be-revealed").magicio('run');
+      $(this).css({visibility: 'hidden'});
+    });
   });
 
   </script>
 
   <style type="text/css">
+
+  br.m-pause { display: none; }
 
   body { font-family: Helvetica, sans-serif; line-height: 1.5em; margin: 0 30%; }
   #to-be-revealed span { opacity: 0; }
@@ -26,12 +38,19 @@
 
 <h1>Magicio The Revealer</h1>
 
-<section>
-  <p id="to-be-revealed">
-    Bacon ipsum dolor sit amet sirloin swine brisket jowl ham, leberkas beef
-    ribs chicken. Sausage capicola chuck shoulder drumstick pork. Tail salami
-    turducken biltong pig prosciutto strip steak pancetta tongue sausage ham
-    hock hamburger.
+<button id="click-to-start">Start</button>
+
+<section id="to-be-revealed">
+  <p class="m-break">
+    Bacon ipsum dolor sit amet sirloin swine brisket jowl ham,
+    <br class="m-pause" />
+    leberkas beef ribs chicken.
+  </p>
+  <p class="m-break">
+    Sausage capicola chuck shoulder drumstick pork.
+    <br class="m-pause other-class" />
+    Tail salami turducken biltong pig prosciutto strip steak pancetta
+    tongue sausage ham hock hamburger.
   </p>
 </section>
 
