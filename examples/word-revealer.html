@@ -1,0 +1,40 @@
+<!doctype html>
+<html>
+<head>
+  <title>Magicio Reveals Words!</title>
+  <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+  <script src="../vendor/jquery.lettering-0.6.1.min.js"></script>
+  <script src="../src/jquery.magicio.js"></script>
+
+  <script type="text/javascript">
+
+  $(document).ready(function($) {
+    $("#to-be-revealed").magicio({debug: true}).magicio('run');
+  });
+
+  </script>
+
+  <style type="text/css">
+
+  body { font-family: Helvetica, sans-serif; line-height: 1.5em; margin: 0 30%; }
+  #to-be-revealed span { opacity: 0; }
+  #to-be-revealed span.revealed { opacity: 1; }
+
+  </style>
+
+</head>
+<body>
+
+<h1>Magicio The Revealer</h1>
+
+<section>
+  <p id="to-be-revealed">
+    Bacon ipsum dolor sit amet sirloin swine brisket jowl ham, leberkas beef
+    ribs chicken. Sausage capicola chuck shoulder drumstick pork. Tail salami
+    turducken biltong pig prosciutto strip steak pancetta tongue sausage ham
+    hock hamburger.
+  </p>
+</section>
+
+</body>
+</html>
