@@ -20,12 +20,21 @@
   class Action
     constructor: (@nextElement, @prevElement, @actionClasses, @actionType, @timing) ->
 
+    eventType: () ->
+      try
+        @actionClasses.match(/\bm-action-(input|timeout)\b/)[1]
+      catch err
+        switch @actionType
+          when "pause" then settings.actionOnPause
+          when "break" then settings.actionOnBreak
+
   methods =
     init: (options) ->
       settings =
         debug: false
-        defaultActionOnPause: 'time'
-        pauseMilliseconds: 150
+        actionOnPause: 'timeout'
+        actionOnBreak: 'input'
+        pauseMilliseconds: 1000
 
       settings = $.extend settings, options
 
@@ -61,7 +70,7 @@
     parse: (jqEl) ->
       jqEl.trigger('beforeparse')
 
-      # First parse & tag explicit breaks
+      # first parse & tag explicit breaks
       breaks = jqEl.children('.m-break')
       log "Breaks: #{breaks.length}"
       if breaks.length is 0
@@ -69,7 +78,7 @@
       else
         breaks.addClass('m-break-parsed')
 
-      # Then parse, wrap & tag explicit pauses
+      # then parse, wrap & tag explicit pauses
       breaks.each () ->
         elBreak = $(@)
         pauses = elBreak.children('br.m-pause')
@@ -82,7 +91,7 @@
             "<span class='m-pause-parsed #{classes}'>#{frag}</span>"
           elBreak.html(fragments.join(''))
 
-      # Collect all actors & store them for the play, then trigger an event
+      # collect all actors & store them for the play, then trigger an event
       actors = jqEl.find('.m-break-parsed, span.m-pause-parsed')
       log "Actors: %o", actors
       jqEl.data('magicio', {actors: actors})
@@ -90,7 +99,49 @@
 
     run: () ->
       @each () ->
-        log "Magicio found on element: %o", $(@).data('magicio')
+        log "Magicio running on element with data: %o", $(@).data('magicio')
+        jqEl = $(@)
+        elData = jqEl.data('magicio')
+        actions = elData.actions
+        jqEl.trigger($.Event('beforerun', {actions: actions}))
+        ixCurrent = elData.current_action_index or 0
+        methods.runAction(jqEl, actions, ixCurrent)
+
+    runAction: (jqEl, actions, ix) ->
+        action = actions[ix]
+
+        # trigger after event for previous action
+        prevAction = actions[ix-1]
+        if prevAction
+          jqEl.trigger($.Event("after#{prevAction.actionType}", {action: prevAction}))
+
+        # make sure we're not out of actions
+        if not action
+          log "Ran out of actions."
+          return true
+
+        # trigger before event for current action
+        log "Going to execute action %o", action
+        jqEl.trigger($.Event("before#{action.actionType}", {action: action}))
+
+        # do whatever the action is (pause or wait for input)
+        log "eventType: #{action.eventType()}"
+        log "timing: #{action.timing}"
+        ixNext = ix + 1
+        switch action.eventType()
+          when 'timeout' then setTimeout(->
+            methods.runAction(jqEl, actions, ixNext)
+          , action.timing)
+          when 'input'
+            inputFn = ->
+              $(document).off 'click', inputFn
+              $(document).off 'keypress', inputFn
+              methods.runAction(jqEl, actions, ixNext)
+            $(document).on 'click', inputFn
+            $(document).on 'keypress', inputFn
+
+        # save the next index back to the collection
+        jqEl.data('magicio', {current_action_index: ixNext})
 
   $.fn.extend
     magicio: (method) ->

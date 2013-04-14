@@ -40,6 +40,22 @@
         this.timing = timing;
       }
 
+      Action.prototype.eventType = function() {
+        var err;
+
+        try {
+          return this.actionClasses.match(/\bm-action-(input|timeout)\b/)[1];
+        } catch (_error) {
+          err = _error;
+          switch (this.actionType) {
+            case "pause":
+              return settings.actionOnPause;
+            case "break":
+              return settings.actionOnBreak;
+          }
+        }
+      };
+
       return Action;
 
     })();
@@ -47,8 +63,9 @@
       init: function(options) {
         settings = {
           debug: false,
-          defaultActionOnPause: 'time',
-          pauseMilliseconds: 150
+          actionOnPause: 'timeout',
+          actionOnBreak: 'input',
+          pauseMilliseconds: 1000
         };
         settings = $.extend(settings, options);
         return this.each(function() {
@@ -135,7 +152,57 @@
       },
       run: function() {
         return this.each(function() {
-          return log("Magicio found on element: %o", $(this).data('magicio'));
+          var actions, elData, ixCurrent, jqEl;
+
+          log("Magicio running on element with data: %o", $(this).data('magicio'));
+          jqEl = $(this);
+          elData = jqEl.data('magicio');
+          actions = elData.actions;
+          jqEl.trigger($.Event('beforerun', {
+            actions: actions
+          }));
+          ixCurrent = elData.current_action_index || 0;
+          return methods.runAction(jqEl, actions, ixCurrent);
+        });
+      },
+      runAction: function(jqEl, actions, ix) {
+        var action, inputFn, ixNext, prevAction;
+
+        action = actions[ix];
+        prevAction = actions[ix - 1];
+        if (prevAction) {
+          jqEl.trigger($.Event("after" + prevAction.actionType, {
+            action: prevAction
+          }));
+        }
+        if (!action) {
+          log("Ran out of actions.");
+          return true;
+        }
+        log("Going to execute action %o", action);
+        jqEl.trigger($.Event("before" + action.actionType, {
+          action: action
+        }));
+        log("eventType: " + (action.eventType()));
+        log("timing: " + action.timing);
+        ixNext = ix + 1;
+        switch (action.eventType()) {
+          case 'timeout':
+            setTimeout(function() {
+              return methods.runAction(jqEl, actions, ixNext);
+            }, action.timing);
+            break;
+          case 'input':
+            inputFn = function() {
+              $(document).off('click', inputFn);
+              $(document).off('keypress', inputFn);
+              return methods.runAction(jqEl, actions, ixNext);
+            };
+            $(document).on('click', inputFn);
+            $(document).on('keypress', inputFn);
+        }
+        return jqEl.data('magicio', {
+          current_action_index: ixNext
         });
       }
     };

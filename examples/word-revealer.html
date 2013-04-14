@@ -8,11 +8,23 @@
   <script type="text/javascript">
 
   $(document).ready(function($) {
-    $("#to-be-revealed").on('afterparse', function (evt) {
-      console.log("afterparse: %o", evt);
+    $("#to-be-revealed").on('beforeparse', function (evt) {
+      console.log(evt.type + ": %o [%s]", evt, $.now()/1000);
+    }).on('afterparse', function (evt) {
+      console.log(evt.type + ": %o [%s]", evt, $.now()/1000);
+    }).on('beforerun', function (evt) {
+      console.log(evt.type + ": %o [%s]", evt, $.now()/1000);
     }).on('beforepause', function (evt) {
-      console.log("beforepause: %o", evt);
-      $(evt.action.nextElements.first()).addClass('revealed');
+      console.log(evt.type + ": %o [%s]", evt, $.now()/1000);
+    }).on('afterpause', function (evt) {
+      console.log(evt.type + ": %o [%s]", evt, $.now()/1000);
+      $(evt.action.nextElement).addClass('revealed');
+    }).on('beforebreak', function (evt) {
+      console.log(evt.type + ": %o [%s]", evt, $.now()/1000);
+    }).on('afterbreak', function (evt) {
+      console.log(evt.type + ": %o [%s]", evt, $.now()/1000);
+    }).on('afterrun', function (evt) {
+      console.log(evt.type + ": %o [%s]", evt, $.now()/1000);
     }).magicio({debug: true});
 
     $("#click-to-start").on('click', function (evt) {
@@ -48,8 +60,9 @@
   </p>
   <p class="m-break">
     Sausage capicola chuck shoulder drumstick pork.
-    <br class="m-pause other-class" />
+    <br class="m-pause m-timing-2000 other-class" />
     Tail salami turducken biltong pig prosciutto strip steak pancetta
+    <br class="m-pause m-timing-2000 other-class" />
     tongue sausage ham hock hamburger.
   </p>
 </section>

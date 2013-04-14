@@ -50,7 +50,7 @@ user to hit any key to continue past the break.
   <thead>
     <tr>
       <th>Event Name</th>
-      <th><code>event.data</code> Contents</th>
+      <th>Event Object Contents</th>
     </tr>
   </thead>
   <tr>
