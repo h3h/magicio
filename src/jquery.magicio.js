@@ -15,7 +15,7 @@
   var __slice = [].slice;
 
   (function($) {
-    var Action, UNIQUE_STR, log, methods, settings;
+    var Action, UNIQUE_STR, actionTypeFromEl, log, methods, settings;
 
     settings = {};
     UNIQUE_STR = "eefec303079ad17405c889e092e105b0";
@@ -29,6 +29,13 @@
         } else {
           return typeof console !== "undefined" && console !== null ? console.log(msg) : void 0;
         }
+      }
+    };
+    actionTypeFromEl = function(el) {
+      if (/\bm-break-parsed\b/.test(el.className)) {
+        return 'break';
+      } else {
+        return 'pause';
       }
     };
     Action = (function() {
@@ -89,13 +96,34 @@
         actors = jqEl.data('magicio').actors;
         jqEl.removeData('magicio', 'actors');
         actions = $.map(actors, function(el, i) {
-          var actionClasses, actionType, err, nextElement, prevElement, timing;
+          var actionClasses, actionType, err, nextElement, prevActionType, prevElement, timing;
 
           if (i > 0) {
-            nextElement = el;
-            prevElement = actors[i - 1];
-            actionType = /\bm-break-parsed\b/.test(el.className) ? 'break' : 'pause';
+            prevActionType = (function() {
+              try {
+                return actionTypeFromEl(actors[i - 1]);
+              } catch (_error) {
+                err = _error;
+                return null;
+              }
+            })();
+            actionType = actionTypeFromEl(el);
             actionClasses = el.className.replace(/m-(pause|break)(-parsed)?/g, '');
+            nextElement = el;
+            prevElement = (function() {
+              if (actionType === 'break') {
+                try {
+                  return $(el).prev('.m-break-parsed')[0];
+                } catch (_error) {
+                  err = _error;
+                  return null;
+                }
+              } else {
+                if (prevActionType === "pause") {
+                  return actors[i - 1];
+                }
+              }
+            })();
             timing = (function() {
               try {
                 return parseInt(el.className.match(/\bm-timing-(\d+)\b/)[1], 10);

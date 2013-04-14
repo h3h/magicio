@@ -17,6 +17,9 @@
     if settings.debug
       if others.length then console?.log(msg, others) else console?.log(msg)
 
+  actionTypeFromEl = (el) ->
+    if /\bm-break-parsed\b/.test(el.className) then 'break' else 'pause'
+
   class Action
     constructor: (@nextElement, @prevElement, @actionClasses, @actionType, @timing) ->
 
@@ -54,14 +57,29 @@
       jqEl.removeData('magicio', 'actors')
       actions = $.map actors, (el, i) ->
         if i > 0
-          nextElement = el
-          prevElement = actors[i-1]
-          actionType = if /\bm-break-parsed\b/.test(el.className) then 'break' else 'pause'
+          prevActionType = try
+            actionTypeFromEl(actors[i-1])
+          catch err
+            null
+
+          actionType = actionTypeFromEl(el)
           actionClasses = el.className.replace(/m-(pause|break)(-parsed)?/g, '')
+          nextElement = el
+
+          prevElement = if actionType is 'break'
+            try
+              $(el).prev('.m-break-parsed')[0]
+            catch err
+              null
+          else
+            if prevActionType is "pause"
+              actors[i-1]
+
           timing = try
             parseInt(el.className.match(/\bm-timing-(\d+)\b/)[1], 10)
           catch err
             settings.pauseMilliseconds
+
           new Action(nextElement, prevElement, actionClasses, actionType, timing)
 
       log "Actions: %o", actions
