@@ -130,3 +130,20 @@ user to hit any key to continue past the break.
     <td><code>"timeout"</code> or <code>"input"</code></td>
   </tr>
 </table>
+
+## Acknowledgements
+
+The content-wrapping algorithm used for pauses was inspired by [Dave Rupert][DR]
+and his wonderful library, [Lettering.js][LJ].
+
+ [DR]: https://twitter.com/davatron5000
+ [LJ]: https://github.com/davatron5000/Lettering.js
+
+## Contributing
+
+Yes, I’ll accept pull requests.
+
+ 1. **Fork It** - Fork the project under your own user (“Fork” button on github.com)
+ 2. **Create a Branch** - Create a branch for your fix, e.g. `jd/fix-revealing`
+ 3. **Push the Branch** - Push your branch to your fork: `git push -u origin jd/fix-revealing`
+ 4. **Create a Pull Request** - View your branch on github.com; click the “Pull Request” button to ask me to merge into `h3h/master`
