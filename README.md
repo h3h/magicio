@@ -2,7 +2,8 @@
 
 *[Ma-jih-shee-oh]*
 
-The well-timed revealer. Code to automate cadence-driven actions in web browser UIs.
+The well-timed revealer. Code to automate cadence-driven actions on words,
+phrases and paragraphs on web pages.
 
 ## Usage
 
@@ -144,6 +145,6 @@ and his wonderful library, [Lettering.js][LJ].
 Yes, I’ll accept pull requests.
 
  1. **Fork It** - Fork the project under your own user (“Fork” button on github.com)
- 2. **Create a Branch** - Create a branch for your fix, e.g. `jd/fix-revealing`
+ 2. **Create a Branch** - Create a branch for your fix, e.g. `git checkout -b jd/fix-revealing`
  3. **Push the Branch** - Push your branch to your fork: `git push -u origin jd/fix-revealing`
  4. **Create a Pull Request** - View your branch on github.com; click the “Pull Request” button to ask me to merge into `h3h/master`
