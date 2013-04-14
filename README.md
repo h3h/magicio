@@ -29,11 +29,11 @@ Then set up Magicio to control that block, set up some listeners for post-pause
 and post-break events and tell Magicio to start running:
 
 ```javascript
-$("#mytext").magicio().on('afterpause', function (evt) {
-  $(evt.action.previousElements).addClass('seen');
+$("#mytext").on('afterpause', function (evt) {
+  $(evt.action.prevelemEnt).addClass('seen');
 }).on('afterbreak', function (evt) {
-  $(evt.action.previousElements).css({opacity: 0});
-}).magicio('run');
+  $(evt.action.prevelemEnt).css({opacity: 0});
+}).magicio().magicio('run');
 ```
 
 By default, *pauses* will be treated as pauses in time and Magicio will keep
@@ -51,35 +51,35 @@ user to hit any key to continue past the break.
   </thead>
   <tr>
     <td><code>beforeparse</code></td>
-    <td><code>{element: [Element]}</code></td>
+    <td></td>
   </tr>
   <tr>
     <td><code>afterparse</code></td>
-    <td><code>{element: [Element], actors: [Array&lt;Element&gt;]}</code></td>
+    <td><code>{actors: [jQuery&lt;Element&gt;]}</code></td>
   </tr>
   <tr>
     <td><code>beforerun</code></td>
-    <td><code>{element: [Element], actions: [Array&lt;Action&gt;]}</code></td>
+    <td><code>{actions: [Array&lt;Action&gt;]}</code></td>
   </tr>
   <tr>
     <td><code>beforepause</code></td>
-    <td><code>{element: [Element], action: [Action]}</code></td>
+    <td><code>{action: [Action]}</code></td>
   </tr>
   <tr>
     <td><code>afterpause</code></td>
-    <td><code>{element: [Element], action: [Action]}</code></td>
+    <td><code>{action: [Action]}</code></td>
   </tr>
   <tr>
     <td><code>beforebreak</code></td>
-    <td><code>{element: [Element], action: [Action]}</code></td>
+    <td><code>{action: [Action]}</code></td>
   </tr>
   <tr>
     <td><code>afterbreak</code></td>
-    <td><code>{element: [Element], action: [Action]}</code></td>
+    <td><code>{action: [Action]}</code></td>
   </tr>
   <tr>
     <td><code>afterrun</code></td>
-    <td><code>{element: [Element], actions: [Array&lt;Action&gt;]}</code></td>
+    <td><code>{actions: [Array&lt;Action&gt;]}</code></td>
   </tr>
   <tr>
 </table>
@@ -93,14 +93,19 @@ user to hit any key to continue past the break.
     <th colspan="3">Attributes</th>
   </tr>
   <tr>
-    <td><code>nextElements</code></td>
-    <td><code>Array&lt;Element&gt;</code></td>
-    <td>the elements immediately preceeding the action</td>
+    <td><code>nextElement</code></td>
+    <td><code>jQuery&lt;Element&gt;</code></td>
+    <td>the actor element immediately preceeding the action</td>
   </tr>
   <tr>
-    <td><code>previousElements</code></td>
-    <td><code>Array&lt;Element&gt;</code></td>
-    <td>the elements immediately succeeding the action</td>
+    <td><code>prevElement</code></td>
+    <td><code>jQuery&lt;Element&gt;</code></td>
+    <td>the actor element immediately succeeding the action</td>
+  </tr>
+  <tr>
+    <td><code>breakClasses</code></td>
+    <td><code>Array&lt;String&gt;</code></td>
+    <td>any additional classes that were on the <code>&lt;br /&gt;</code> element</td>
   </tr>
   <tr>
     <td><code>breakType</code></td>
