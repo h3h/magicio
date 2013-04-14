@@ -205,6 +205,9 @@
         }
         if (!action) {
           log("Ran out of actions.");
+          jqEl.trigger($.Event("afterrun", {
+            actions: actions
+          }));
           return true;
         }
         log("Going to execute action %o", action);

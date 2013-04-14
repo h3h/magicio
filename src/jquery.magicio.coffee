@@ -133,9 +133,10 @@
         if prevAction
           jqEl.trigger($.Event("after#{prevAction.actionType}", {action: prevAction}))
 
-        # make sure we're not out of actions
+        # if we're out of actions, wrap things up
         if not action
           log "Ran out of actions."
+          jqEl.trigger($.Event("afterrun", {actions: actions}))
           return true
 
         # trigger before event for current action
