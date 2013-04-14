@@ -34,9 +34,9 @@ and post-break events and tell Magicio to start running:
 
 ```javascript
 $("#mytext").on('afterpause', function (evt) {
-  $(evt.action.prevElement).addClass('seen');
+  $(evt.action.nextElement).addClass('revealed');
 }).on('afterbreak', function (evt) {
-  $(evt.action.prevElement).css({opacity: 0});
+  $(evt.action.nextElement).addClass('current_paragraph');
 }).magicio().magicio('run');
 ```
 
