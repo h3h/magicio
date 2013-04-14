@@ -103,12 +103,12 @@ user to hit any key to continue past the break.
     <td>the actor element immediately succeeding the action</td>
   </tr>
   <tr>
-    <td><code>breakClasses</code></td>
+    <td><code>actionClasses</code></td>
     <td><code>Array&lt;String&gt;</code></td>
     <td>any additional classes that were on the <code>&lt;br /&gt;</code> element</td>
   </tr>
   <tr>
-    <td><code>breakType</code></td>
+    <td><code>actionType</code></td>
     <td><code>String</code></td>
     <td><code>"time"</code> or <code>"action"</code></td>
   </tr>

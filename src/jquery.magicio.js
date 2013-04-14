@@ -32,11 +32,11 @@
       }
     };
     Action = (function() {
-      function Action(nextElement, prevElement, breakClasses, breakType, timing) {
+      function Action(nextElement, prevElement, actionClasses, actionType, timing) {
         this.nextElement = nextElement;
         this.prevElement = prevElement;
-        this.breakClasses = breakClasses;
-        this.breakType = breakType;
+        this.actionClasses = actionClasses;
+        this.actionType = actionType;
         this.timing = timing;
       }
 
@@ -47,7 +47,8 @@
       init: function(options) {
         settings = {
           debug: false,
-          defaultActionOnPause: 'time'
+          defaultActionOnPause: 'time',
+          pauseMilliseconds: 150
         };
         settings = $.extend(settings, options);
         return this.each(function() {
@@ -55,7 +56,8 @@
 
           log("Initializing Magicio for element with id \"" + this.id + "\"");
           jqEl = $(this);
-          return methods.parse(jqEl);
+          methods.parse(jqEl);
+          return methods.buildActions(jqEl);
         });
       },
       destroy: function(jqEl) {
@@ -65,6 +67,30 @@
         });
       },
       buildActions: function(jqEl) {
+        var actions, actors;
+
+        actors = jqEl.data('magicio').actors;
+        jqEl.removeData('magicio', 'actors');
+        actions = $.map(actors, function(el, i) {
+          var actionClasses, actionType, err, nextElement, prevElement, timing;
+
+          if (i > 0) {
+            nextElement = el;
+            prevElement = actors[i - 1];
+            actionType = /\bm-break-parsed\b/.test(el.className) ? 'break' : 'pause';
+            actionClasses = el.className.replace(/m-(pause|break)(-parsed)?/g, '');
+            timing = (function() {
+              try {
+                return parseInt(el.className.match(/\bm-timing-(\d+)\b/)[1], 10);
+              } catch (_error) {
+                err = _error;
+                return settings.pauseMilliseconds;
+              }
+            })();
+            return new Action(nextElement, prevElement, actionClasses, actionType, timing);
+          }
+        });
+        log("Actions: %o", actions);
         return jqEl.data('magicio', {
           actions: actions
         });
@@ -99,6 +125,7 @@
           }
         });
         actors = jqEl.find('.m-break-parsed, span.m-pause-parsed');
+        log("Actors: %o", actors);
         jqEl.data('magicio', {
           actors: actors
         });

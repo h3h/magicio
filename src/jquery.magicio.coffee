@@ -18,13 +18,14 @@
       if others.length then console?.log(msg, others) else console?.log(msg)
 
   class Action
-    constructor: (@nextElement, @prevElement, @breakClasses, @breakType, @timing) ->
+    constructor: (@nextElement, @prevElement, @actionClasses, @actionType, @timing) ->
 
   methods =
     init: (options) ->
       settings =
         debug: false
         defaultActionOnPause: 'time'
+        pauseMilliseconds: 150
 
       settings = $.extend settings, options
 
@@ -32,7 +33,7 @@
         log "Initializing Magicio for element with id \"#{@id}\""
         jqEl = $(@)
         methods.parse(jqEl)
-        #methods.buildActions(jqEl)
+        methods.buildActions(jqEl)
 
     destroy: (jqEl) ->
       @each () ->
@@ -40,6 +41,21 @@
         $(@).removeData('magicio')
 
     buildActions: (jqEl) ->
+      actors = jqEl.data('magicio').actors
+      jqEl.removeData('magicio', 'actors')
+      actions = $.map actors, (el, i) ->
+        if i > 0
+          nextElement = el
+          prevElement = actors[i-1]
+          actionType = if /\bm-break-parsed\b/.test(el.className) then 'break' else 'pause'
+          actionClasses = el.className.replace(/m-(pause|break)(-parsed)?/g, '')
+          timing = try
+            parseInt(el.className.match(/\bm-timing-(\d+)\b/)[1], 10)
+          catch err
+            settings.pauseMilliseconds
+          new Action(nextElement, prevElement, actionClasses, actionType, timing)
+
+      log "Actions: %o", actions
       jqEl.data('magicio', {actions: actions})
 
     parse: (jqEl) ->
@@ -68,6 +84,7 @@
 
       # Collect all actors & store them for the play, then trigger an event
       actors = jqEl.find('.m-break-parsed, span.m-pause-parsed')
+      log "Actors: %o", actors
       jqEl.data('magicio', {actors: actors})
       jqEl.trigger($.Event('afterparse', {actors: actors}))
 
