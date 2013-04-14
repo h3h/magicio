@@ -9,20 +9,24 @@ The well-timed revealer. Code to automate cadence-driven actions in web browser 
 First, mark up your HTML with the pauses and breaks you want to use:
 
 ```html
-<p id="mytext">
-  Bacon ipsum dolor sit amet sirloin swine brisket jowl ham,
-  <br class="m-pause" /> leberkas beef ribs chicken.
+<section id="mytext">
+  <p class="m-break">
+    Bacon ipsum dolor sit amet sirloin swine brisket jowl ham,
+    <br class="m-pause" />
+    leberkas beef ribs chicken.
+  </p>
 
-  <br class="m-break" />
-
-  Sausage capicola chuck shoulder drumstick pork. Tail salami turducken biltong
-  pig prosciutto strip steak pancetta tongue sausage ham hock hamburger.
-  <br class="pause" /> Ham hock boudin pork loin bacon, ribeye ball tip doner
-  hamburger chicken short ribs prosciutto. Venison filet mignon capicola, ball
-  tip andouille corned beef doner spare ribs turducken ham hock drumstick
-  bresaola sirloin brisket. Meatloaf rump frankfurter, sirloin tail beef ribs
-  sausage chuck fatback.
-</p>
+  <p class="m-break">
+    Sausage capicola chuck shoulder drumstick pork. Tail salami turducken biltong
+    pig prosciutto strip steak pancetta tongue sausage ham hock hamburger.
+    <br class="m-pause m-timing-500" />
+    Ham hock boudin pork loin bacon, ribeye ball tip doner
+    hamburger chicken short ribs prosciutto. Venison filet mignon capicola, ball
+    tip andouille corned beef doner spare ribs turducken ham hock drumstick
+    bresaola sirloin brisket. Meatloaf rump frankfurter, sirloin tail beef ribs
+    sausage chuck fatback.
+  </p>
+</section>
 ```
 
 Then set up Magicio to control that block, set up some listeners for post-pause
