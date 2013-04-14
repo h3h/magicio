@@ -108,17 +108,25 @@ user to hit any key to continue past the break.
   </tr>
   <tr>
     <td><code>actionClasses</code></td>
-    <td><code>Array&lt;String&gt;</code></td>
-    <td>any additional classes that were on the <code>&lt;br /&gt;</code> element</td>
+    <td><code>String</code></td>
+    <td>any additional classes that were on the <code>&lt;br /&gt;</code> element (whitespace-separated)</td>
   </tr>
   <tr>
     <td><code>actionType</code></td>
     <td><code>String</code></td>
-    <td><code>"time"</code> or <code>"action"</code></td>
+    <td><code>"pause"</code> or <code>"break"</code></td>
   </tr>
   <tr>
     <td><code>timing</code></td>
     <td><code>Integer</code></td>
     <td>milliseconds to pause for a <code>time</code> action</td>
+  </tr>
+  <tr>
+    <th colspan="3">Methods</th>
+  </tr>
+  <tr>
+    <td><code>eventType()</code></td>
+    <td><code>String</code></td>
+    <td><code>"timeout"</code> or <code>"input"</code></td>
   </tr>
 </table>
