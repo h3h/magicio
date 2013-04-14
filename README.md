@@ -45,6 +45,40 @@ By default, *pauses* will be treated as pauses in time and Magicio will keep
 going after reaching a pause. *Breaks*, on the other hand, will require the
 user to hit any key to continue past the break.
 
+## Options
+
+These can be passed to the `magicio()` plugin method when setting it up.
+
+<table>
+  <thead>
+    <tr>
+      <th>Option</th>
+      <th>Default</th>
+      <th>Allowed Values</th>
+    </tr>
+  </thead>
+  <tr>
+    <td><code>actionOnPause</code></td>
+    <td><code>"timeout"</code></td>
+    <td><code>"timeout"</code>, <code>"input"</code> (wait for a click/key press)</td>
+  </tr>
+  <tr>
+    <td><code>actionOnBreak</code></td>
+    <td><code>"input"</code></td>
+    <td><code>"timeout"</code>, <code>"input"</code> (wait for a click/key press)</td>
+  </tr>
+  <tr>
+    <td><code>debug</code></td>
+    <td><code>false</code></td>
+    <td><code>true</code>, <code>false</code></td>
+  </tr>
+  <tr>
+    <td><code>pauseMilliseconds</code></td>
+    <td><code>1000</code></td>
+    <td>Any integer value that represents a reasonable number of milliseconds.</td>
+  </tr>
+</table>
+
 ## Events
 
 <table>

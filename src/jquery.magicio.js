@@ -69,9 +69,9 @@
     methods = {
       init: function(options) {
         settings = {
-          debug: false,
           actionOnPause: 'timeout',
           actionOnBreak: 'input',
+          debug: false,
           pauseMilliseconds: 1000
         };
         settings = $.extend(settings, options);
