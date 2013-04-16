@@ -105,8 +105,11 @@
         fragments = elBreak.html().split(UNIQUE_STR)
         if fragments.length > 0
           fragments = $.map fragments, (frag, i) ->
-            classes = if pauses[i-1] then pauses[i-1].className.replace(/\bm-pause\b/, '') else ''
-            "<span class='m-pause-parsed #{classes}'>#{frag}</span>"
+            if /^\s+$/.test(frag)
+              ''
+            else
+              classes = if pauses[i-1] then pauses[i-1].className.replace(/\bm-pause\b/, '') else ''
+              "<span class='m-pause-parsed #{classes}'>#{frag}</span>"
           elBreak.html(fragments.join(''))
 
       # collect all actors & store them for the play, then trigger an event
@@ -123,6 +126,7 @@
         actions = elData.actions
         jqEl.trigger($.Event('beforerun', {actions: actions}))
         ixCurrent = elData.current_action_index or 0
+        log "Current action index pulled from data: #{ixCurrent}"
         methods.runAction(jqEl, actions, ixCurrent)
 
     runAction: (jqEl, actions, ix) ->
@@ -140,24 +144,22 @@
           return true
 
         # trigger before event for current action
-        log "Going to execute action %o", action
+        log "Going to execute action ##{ix} %o", action
         jqEl.trigger($.Event("before#{action.actionType}", {action: action}))
 
         # do whatever the action is (pause or wait for input)
         log "eventType: #{action.eventType()}"
-        log "timing: #{action.timing}"
+        log "timing: #{action.timing}" if action.eventType() is "timeout"
         ixNext = ix + 1
         switch action.eventType()
           when 'timeout' then setTimeout(->
             methods.runAction(jqEl, actions, ixNext)
           , action.timing)
           when 'input'
-            inputFn = ->
-              $(document).off 'click', inputFn
-              $(document).off 'keypress', inputFn
+            inputCallback =  ->
+              $(document).off 'click keypress touchstart', inputCallback
               methods.runAction(jqEl, actions, ixNext)
-            $(document).on 'click', inputFn
-            $(document).on 'keypress', inputFn
+            $(document).one 'click keypress touchstart', inputCallback
 
         # save the next index back to the collection
         jqEl.data('magicio', {current_action_index: ixNext})

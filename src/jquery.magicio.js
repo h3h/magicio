@@ -163,8 +163,12 @@
             fragments = $.map(fragments, function(frag, i) {
               var classes;
 
-              classes = pauses[i - 1] ? pauses[i - 1].className.replace(/\bm-pause\b/, '') : '';
-              return "<span class='m-pause-parsed " + classes + "'>" + frag + "</span>";
+              if (/^\s+$/.test(frag)) {
+                return '';
+              } else {
+                classes = pauses[i - 1] ? pauses[i - 1].className.replace(/\bm-pause\b/, '') : '';
+                return "<span class='m-pause-parsed " + classes + "'>" + frag + "</span>";
+              }
             });
             return elBreak.html(fragments.join(''));
           }
@@ -190,11 +194,12 @@
             actions: actions
           }));
           ixCurrent = elData.current_action_index || 0;
+          log("Current action index pulled from data: " + ixCurrent);
           return methods.runAction(jqEl, actions, ixCurrent);
         });
       },
       runAction: function(jqEl, actions, ix) {
-        var action, inputFn, ixNext, prevAction;
+        var action, inputCallback, ixNext, prevAction;
 
         action = actions[ix];
         prevAction = actions[ix - 1];
@@ -210,12 +215,14 @@
           }));
           return true;
         }
-        log("Going to execute action %o", action);
+        log("Going to execute action #" + ix + " %o", action);
         jqEl.trigger($.Event("before" + action.actionType, {
           action: action
         }));
         log("eventType: " + (action.eventType()));
-        log("timing: " + action.timing);
+        if (action.eventType() === "timeout") {
+          log("timing: " + action.timing);
+        }
         ixNext = ix + 1;
         switch (action.eventType()) {
           case 'timeout':
@@ -224,13 +231,11 @@
             }, action.timing);
             break;
           case 'input':
-            inputFn = function() {
-              $(document).off('click', inputFn);
-              $(document).off('keypress', inputFn);
+            inputCallback = function() {
+              $(document).off('click keypress touchstart', inputCallback);
               return methods.runAction(jqEl, actions, ixNext);
             };
-            $(document).on('click', inputFn);
-            $(document).on('keypress', inputFn);
+            $(document).one('click keypress touchstart', inputCallback);
         }
         return jqEl.data('magicio', {
           current_action_index: ixNext
