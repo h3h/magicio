@@ -37,6 +37,7 @@
         actionOnPause: 'timeout'
         actionOnBreak: 'input'
         debug: false
+        disableScrollOnSpace: false
         pauseMilliseconds: 1000
 
       settings = $.extend settings, options
@@ -156,8 +157,10 @@
             methods.runAction(jqEl, actions, ixNext)
           , action.timing)
           when 'input'
-            inputCallback =  ->
+            inputCallback =  (evt) ->
               $(document).off 'click keypress touchstart', inputCallback
+              if evt.which is 32 and settings.disableScrollOnSpace
+                evt.preventDefault()
               methods.runAction(jqEl, actions, ixNext)
             $(document).one 'click keypress touchstart', inputCallback
 
