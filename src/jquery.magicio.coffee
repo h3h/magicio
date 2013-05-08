@@ -160,11 +160,17 @@
           , action.timing)
           when 'input'
             inputCallback =  (evt) ->
+              log "Firing & removing magicio document input listener."
+              jqEl.removeData('magicio', 'input_callback')
               $(document).off "click keypress #{touchEvent}", inputCallback
               if evt.which is 32 and settings.disableScrollOnSpace
                 evt.preventDefault()
               methods.runAction(jqEl, actions, ixNext)
-            $(document).one "click keypress #{touchEvent}", inputCallback
+            log "Attempting to set magicio document input listener..."
+            unless (data = jqEl.data('magicio')) and data['input_callback']
+              jqEl.data('magicio', {input_callback: inputCallback})
+              $(document).one "click keypress #{touchEvent}", inputCallback
+              log "Successfully set magicio document input listener."
 
         # save the next index back to the collection
         jqEl.data('magicio', {current_action_index: ixNext})
