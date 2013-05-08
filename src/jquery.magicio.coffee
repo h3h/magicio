@@ -20,6 +20,8 @@
   actionTypeFromEl = (el) ->
     if /\bm-break-parsed\b/.test(el.className) then 'break' else 'pause'
 
+  touchEvent = if $.mobile then "tap" else "touchstart"
+
   class Action
     constructor: (@nextElement, @prevElement, @actionClasses, @actionType, @timing) ->
 
@@ -158,11 +160,11 @@
           , action.timing)
           when 'input'
             inputCallback =  (evt) ->
-              $(document).off 'click keypress touchstart', inputCallback
+              $(document).off "click keypress #{touchEvent}", inputCallback
               if evt.which is 32 and settings.disableScrollOnSpace
                 evt.preventDefault()
               methods.runAction(jqEl, actions, ixNext)
-            $(document).one 'click keypress touchstart', inputCallback
+            $(document).one "click keypress #{touchEvent}", inputCallback
 
         # save the next index back to the collection
         jqEl.data('magicio', {current_action_index: ixNext})
