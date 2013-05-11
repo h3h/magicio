@@ -20,7 +20,10 @@
   actionTypeFromEl = (el) ->
     if /\bm-break-parsed\b/.test(el.className) then 'break' else 'pause'
 
-  touchEvent = if $.mobile then "" else "touchstart"
+  inputEvent = if Modernizr?.touch
+    if jQuery?.mobile then 'vclick' else 'touchstart'
+  else
+    'click'
 
   class Action
     constructor: (@nextElement, @prevElement, @actionClasses, @actionType, @timing) ->
@@ -46,7 +49,7 @@
 
       @each () ->
         log "Initializing Magicio for element with id \"#{@id}\""
-        log "Using '#{touchEvent}' as our touch event."
+        log "Using '#{inputEvent}' as our input event."
         jqEl = $(@)
         methods.parse(jqEl)
         methods.buildActions(jqEl)
@@ -163,15 +166,16 @@
             inputCallback = (evt) ->
               log "Firing & removing magicio document input listener."
               log "Event: %o", evt
+              log "Target: %o", evt.target
               jqEl.removeData('magicio', 'input_callback')
-              $(document).off "click keypress #{touchEvent}", inputCallback
+              $(document).off "keypress #{inputEvent}", inputCallback
               if evt.which is 32 and settings.disableScrollOnSpace
                 evt.preventDefault()
               methods.runAction(jqEl, actions, ixNext)
             log "Attempting to set magicio document input listener..."
             unless (data = jqEl.data('magicio')) and data['input_callback']
               jqEl.data('magicio', {input_callback: inputCallback})
-              $(document).one "click keypress #{touchEvent}", inputCallback
+              $(document).one "keypress #{inputEvent}", inputCallback
               log "Successfully set magicio document input listener."
 
         # save the next index back to the collection
