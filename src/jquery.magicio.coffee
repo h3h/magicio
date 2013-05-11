@@ -20,7 +20,7 @@
   actionTypeFromEl = (el) ->
     if /\bm-break-parsed\b/.test(el.className) then 'break' else 'pause'
 
-  touchEvent = if $.mobile then "tap" else "touchstart"
+  touchEvent = if $.mobile then "" else "touchstart"
 
   class Action
     constructor: (@nextElement, @prevElement, @actionClasses, @actionType, @timing) ->
@@ -46,6 +46,7 @@
 
       @each () ->
         log "Initializing Magicio for element with id \"#{@id}\""
+        log "Using '#{touchEvent}' as our touch event."
         jqEl = $(@)
         methods.parse(jqEl)
         methods.buildActions(jqEl)
@@ -159,8 +160,9 @@
             methods.runAction(jqEl, actions, ixNext)
           , action.timing)
           when 'input'
-            inputCallback =  (evt) ->
+            inputCallback = (evt) ->
               log "Firing & removing magicio document input listener."
+              log "Event: %o", evt
               jqEl.removeData('magicio', 'input_callback')
               $(document).off "click keypress #{touchEvent}", inputCallback
               if evt.which is 32 and settings.disableScrollOnSpace
