@@ -1,5 +1,5 @@
 ###!
-* Magicio 0.1
+* Magicio 0.2
 *
 * Copyright 2013, Brad Fults - http://bradfults.com/
 * Released under the MIT License
@@ -20,10 +20,7 @@
   actionTypeFromEl = (el) ->
     if /\bm-break-parsed\b/.test(el.className) then 'break' else 'pause'
 
-  inputEvent = if Modernizr?.touch
-    if jQuery?.mobile then 'vclick' else 'touchstart'
-  else
-    'click'
+  inputEvent = if $?.mobile?.support?.touch then 'vclick' else 'click'
 
   class Action
     constructor: (@nextElement, @prevElement, @actionClasses, @actionType, @timing) ->
@@ -171,7 +168,11 @@
               $(document).off "keypress #{inputEvent}", inputCallback
               if evt.which is 32 and settings.disableScrollOnSpace
                 evt.preventDefault()
+              if inputEvent is "vclick"
+                evt.preventDefault()
+                evt.stopImmediatePropagation()
               methods.runAction(jqEl, actions, ixNext)
+
             log "Attempting to set magicio document input listener..."
             unless (data = jqEl.data('magicio')) and data['input_callback']
               jqEl.data('magicio', {input_callback: inputCallback})
